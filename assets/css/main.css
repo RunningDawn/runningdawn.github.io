@@ -25,6 +25,7 @@ footer, header, hgroup, menu, nav, section {
 
 ol, ul {
 	list-style: none;
+	padding-inline-start: 0px;
 }
 
 blockquote, q {
@@ -407,6 +408,12 @@ a {
 	-ms-animation-delay: 0.75s;
 	animation-delay: 0.75s;
 }
+#header nav.links li:nth-child(3) {
+	-moz-animation-delay: 1s;
+	-webkit-animation-delay: 1s;
+	-ms-animation-delay: 1s;
+	animation-delay: 1s;
+}
 #header nav.games li {
 	-moz-animation: nav-icons 1s ease-in-out forwards;
 	-webkit-animation: nav-icons 1s ease-in-out forwards;
@@ -429,16 +436,16 @@ a {
 	/* width: 5.35em; */
 }
 #header nav.games li:nth-child(1) {
-	-moz-animation-delay: 1s;
-	-webkit-animation-delay: 1s;
-	-ms-animation-delay: 1s;
-	animation-delay: 1s;
-}
-#header nav.games li:nth-child(2) {
 	-moz-animation-delay: 1.25s;
 	-webkit-animation-delay: 1.25s;
 	-ms-animation-delay: 1.25s;
 	animation-delay: 1.25s;
+}
+#header nav.games li:nth-child(2) {
+	-moz-animation-delay: 1.5s;
+	-webkit-animation-delay: 1.5s;
+	-ms-animation-delay: 1.5s;
+	animation-delay: 1.5s;
 }
 
 
