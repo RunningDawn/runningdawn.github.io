@@ -22,7 +22,18 @@
 			<div id="bg"></div>
 			<div id="overlay"></div>
 			<div id="main">
+				<div id="eventOverlay" class="overlay">
+					<div class="overlay-content">
+						<iframe src="https://calendar.google.com/calendar/embed?src=q81f25l3cj2msbrk2f6bceq4r8%40group.calendar.google.com"></iframe>
+						<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+					</div>
+				</div>
 				<header id="header">
+					<nav class="games">
+						<ul>
+							<li><a href="#" onclick="openNav()" class="game">Events</a></li>
+						</ul>
+					</nav>
 					<h1 style="color:black">Running Dawn</h1>
 					<nav class="links">
 						<ul>
@@ -47,6 +58,8 @@
 			window.onload = function() { document.body.classList.remove('is-preload'); }
 			window.ontouchmove = function() { return false; }
 			window.onorientationchange = function() { document.body.scrollTop = 0; }
+			function openNav()  { document.getElementById("eventOverlay").style.height = "100%"; }
+			function closeNav() { document.getElementById("eventOverlay").style.height = "0%"; }
 		</script>
 	</body>
 </html>
