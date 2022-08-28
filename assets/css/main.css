@@ -487,6 +487,18 @@ a {
 	-ms-animation-delay: 1.5s;
 	animation-delay: 1.5s;
 }
+#header nav.games li:nth-child(3) {
+	-moz-animation-delay: 1.75s;
+	-webkit-animation-delay: 1.75s;
+	-ms-animation-delay: 1.75s;
+	animation-delay: 1.75s;
+}
+#header nav.games li:nth-child(4) {
+	-moz-animation-delay: 2s;
+	-webkit-animation-delay: 2s;
+	-ms-animation-delay: 2s;
+	animation-delay: 2s;
+}
 
 /*game buttons*/
 #header nav a.game {
@@ -494,7 +506,7 @@ a {
 	-webkit-touch-callout: none;
 	display: block;
 	/* display: inline-block; */
-	border-radius: 20%;
+	border-radius: 30%;
 	border: solid 2px #555;
 	/* display: block; */
 	font-size: 1.75em;
