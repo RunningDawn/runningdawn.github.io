@@ -14,8 +14,7 @@
   "dependencies": {
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-router": "^7.5.3",
-    "vite-plugin-ssr": "^0.4.85"
+    "react-router": "^7.5.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
