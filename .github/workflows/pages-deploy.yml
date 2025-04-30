@@ -38,6 +38,7 @@ jobs:
           git reset --hard
 
           cp -r dist/* .
+          cp dist/index.html dist/404.html
 
           git add .
           git commit -m "Deploy to GitHub Pages"
