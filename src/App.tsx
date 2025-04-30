@@ -52,9 +52,9 @@ function App() {
           <h1 style={{ color: 'black' }}>Running Dawn</h1>
           <nav className="links">
             <ul>
-              <li><a href="http://github.runningdawn.com" className="icon brands fa-github"></a></li>
-              <li><a href="http://steam.runningdawn.com" className="icon brands fa-steam"></a></li>
-              <li><a href="http://discord.runningdawn.com" className="icon brands fa-discord"></a></li>
+              <li><a href="https://github.com/RunningDawn" className="icon brands fa-github"></a></li>
+              <li><a href="https://steamcommunity.com/groups/RunningDawn" className="icon brands fa-steam"></a></li>
+              <li><a href="https://discord.gg/runningdawn" className="icon brands fa-discord"></a></li>
             </ul>
           </nav>
           <nav className="games">
