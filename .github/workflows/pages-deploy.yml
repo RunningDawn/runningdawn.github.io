@@ -25,7 +25,9 @@ jobs:
         run: npm ci
 
       - name: Build site
-        run: npm run build
+        run: |
+          npm run build
+          rm -rf node_modules
 
       - name: Deploy to GitHub Pages
         run: |
