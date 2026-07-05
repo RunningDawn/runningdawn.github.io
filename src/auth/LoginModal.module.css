@@ -1,0 +1,90 @@
+.discord {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #fff;
+  background: #5865f2;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-family: inherit;
+}
+
+.discord:hover {
+  background: #4752c4;
+}
+
+.account {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.userRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.username {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.chipOn,
+.chipOff {
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid;
+}
+
+.chipOn {
+  color: #c4af64;
+  border-color: #c4af64;
+  background: rgba(196, 175, 100, 0.1);
+}
+
+.chipOff {
+  color: #6b7280;
+  border-color: #2a2d3a;
+}
+
+.logout {
+  align-self: flex-start;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(220, 38, 38, 0.8);
+  cursor: pointer;
+  transition: background 0.15s;
+  font-family: inherit;
+}
+
+.logout:hover {
+  background: #dc2626;
+}

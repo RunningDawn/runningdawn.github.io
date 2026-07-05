@@ -393,6 +393,13 @@ a {
 	animation-delay: 1s;
 }
 
+#header nav.links li:nth-child(4) {
+	-moz-animation-delay: 1.25s;
+	-webkit-animation-delay: 1.25s;
+	-ms-animation-delay: 1.25s;
+	animation-delay: 1.25s;
+}
+
 /*icon buttons*/
 #header nav a.icon {
 	-webkit-tap-highlight-color: rgba(196, 175, 100, 0.3);
@@ -496,6 +503,14 @@ a {
 	-webkit-animation-delay: 2s;
 	-ms-animation-delay: 2s;
 	animation-delay: 2s;
+}
+
+/* Albion tile: fade in after the github/steam/discord icons (0.5s/0.75s/1s). */
+#header nav.games li.albion-tile {
+	-moz-animation-delay: 1.5s;
+	-webkit-animation-delay: 1.5s;
+	-ms-animation-delay: 1.5s;
+	animation-delay: 1.5s;
 }
 
 /*game buttons*/

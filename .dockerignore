@@ -1,0 +1,14 @@
+# Keep the build context small and the image clean.
+# node_modules: rebuilt inside the container for linux (host is win32 - wrong native binaries).
+node_modules
+dist
+.git
+.gitignore
+# .env* stays on the host and is provided at runtime, never baked in.
+.env*
+*.log
+.vscode
+.idea
+Dockerfile
+.dockerignore
+docker-compose.yml

@@ -1,0 +1,21 @@
+# Local dev only. Vite dev server with hot reload on host src edits.
+#   docker compose up --build         # build image + run, follow logs
+#   docker compose up -d              # run detached
+#   docker compose restart localdev   # bounce without rebuild
+# Change a dependency (package.json) -> rebuild AND recreate the node_modules volume:
+#   docker compose down -v && docker compose up --build
+services:
+  localdev:
+    container_name: runningdawn-localdev
+    build: .
+    ports:
+      - '5174:5174'
+    environment:
+      # Docker Desktop bind mounts miss inotify events; chokidar polls instead so HMR fires.
+      - CHOKIDAR_USEPOLLING=true
+    volumes:
+      # Whole project is live-editable (src, index.html, public, vite.config), but the
+      # anonymous volume keeps the container's linux node_modules (do NOT let the host's
+      # node_modules overlay it).
+      - .:/app
+      - /app/node_modules
