@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { DataTable, type Column } from '../../../../components/DataTable'
-import { API_URLS } from '../../../../config/apiUrls'
+import { albionFetch } from '../../api'
 const DAY_MS = 86_400_000
 const MONTH_MS = 30 * DAY_MS
 const FORTY8_H_MS = 2 * DAY_MS
@@ -69,12 +69,10 @@ export function GuildRoster() {
     let cancelled = false
     async function fetchMembers() {
       try {
-        const res = await fetch(`${API_URLS.forgeAPI}/game/albion/guild-data`, { credentials: 'include' })
+        const res = await albionFetch<MemberData[]>('/game/albion/guild-data')
         if (cancelled) return
-        if (!res.ok) throw new Error(`API returned ${res.status}`)
-        const json = await res.json()
-        if (!cancelled && json.status === 'ok') setMembers(json.payload as MemberData[])
-        else if (!cancelled) setError(json.message || 'Failed to load')
+        if (res.status === 'ok') setMembers(res.payload)
+        else setError(res.message || 'Failed to load')
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : 'Failed to load')
       } finally {
