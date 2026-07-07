@@ -3,9 +3,11 @@ import { Link } from 'react-router'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGithub, faSteam, faDiscord } from '@fortawesome/free-brands-svg-icons'
 import { faCalendarDays } from '@fortawesome/free-solid-svg-icons'
-import '../App.css'
+import { useLandingStyles } from '../hooks/useLandingStyles'
 
 function LandingPage() {
+  useLandingStyles()
+
   useEffect(() => {
     document.body.classList.remove("is-preloaded");
 
