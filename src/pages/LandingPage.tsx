@@ -45,7 +45,7 @@ function LandingPage() {
         <div id="eventOverlay" className="overlay">
           <div className="overlay-content">
             <iframe src="https://calendar.google.com/calendar/embed?src=q81f25l3cj2msbrk2f6bceq4r8%40group.calendar.google.com"></iframe>
-            <a className="closebtn" onClick={closeEvents}>&times;</a>
+            <a className="closebtn" onClick={closeEvents} style={{ cursor: 'pointer' }}>&times;</a>
           </div>
         </div>
         <header id="header">
