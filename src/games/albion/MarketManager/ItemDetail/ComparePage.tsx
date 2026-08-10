@@ -1,37 +1,21 @@
-import { useEffect } from 'react'
 import { useSearchParams } from 'react-router'
-import { useAuth } from '../../../../auth/authContext'
-import { useLayoutOverride } from '../../../../components/LayoutOverride'
+import { NativeSelect } from '../../../../components/NativeSelect'
 import { DEFAULT_QUALITY, CITIES } from '../../constants'
 import { loadDefaultCity } from '../premium'
-import { MarketManagerSidebar } from '../MarketManagerSidebar'
-import { MarketManagerBottomBar } from '../MarketManagerBottomBar'
+import { useMarketManagerChrome } from '../useMarketManagerChrome'
 import { ItemDetailPanel } from './ItemDetailPanel'
 
 // Two item variants side by side (e.g. a T5.3 vs a T6.2) sharing one city. Desktop only - the
 // panels are too wide to stack usefully on mobile.
 export function ComparePage() {
   const [params, setParams] = useSearchParams()
-  const { isAuthenticated } = useAuth()
-  const { setSidebar, setBottomBar } = useLayoutOverride()
+  useMarketManagerChrome()
 
   const a = params.get('a') ?? ''
   const b = params.get('b') ?? a
   const qa = Number(params.get('qa')) || DEFAULT_QUALITY
   const qb = Number(params.get('qb')) || DEFAULT_QUALITY
   const city = params.get('city') || loadDefaultCity()
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      setSidebar(MarketManagerSidebar)
-      setBottomBar(MarketManagerBottomBar)
-    } else {
-      setSidebar(null)
-      setBottomBar(null)
-    }
-    return () => { setSidebar(null); setBottomBar(null) }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated])
 
   function setParam(key: string, value: string) {
     const next = new URLSearchParams(params)
@@ -45,13 +29,9 @@ export function ComparePage() {
         <h1 className="text-xl font-semibold text-[#e2e4ed] tracking-wide">
           Albion Online <span className="text-[#c4af64]">Compare</span>
         </h1>
-        <select
-          value={city}
-          onChange={e => setParam('city', e.target.value)}
-          className="bg-[#0f1117] border border-[#2a2d3a] rounded px-2 py-1.5 text-xs text-[#e2e4ed] focus:outline-none focus:border-[#c4af64] cursor-pointer"
-        >
+        <NativeSelect value={city} onChange={e => setParam('city', e.target.value)}>
           {CITIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
-        </select>
+        </NativeSelect>
       </div>
 
       <p className="lg:hidden text-sm text-[#6b7280] text-center py-16">

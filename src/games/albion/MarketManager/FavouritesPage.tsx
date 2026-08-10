@@ -1,14 +1,8 @@
-import { useEffect, useMemo, useState } from 'react'
-import { useAuth } from '../../../auth/authContext'
-import { useLayoutOverride } from '../../../components/LayoutOverride'
+import { useMemo, useState } from 'react'
 import { useItemFavourites } from '../../../hooks/useItemFavourites'
 import { DEFAULT_QUALITY } from '../constants'
-import {
-  loadCraftStrategy, loadDefaultCity, loadMatSource, usePref,
-  saveCraftStrategy, saveMatSource,
-} from './premium'
-import { MarketManagerSidebar } from './MarketManagerSidebar'
-import { MarketManagerBottomBar } from './MarketManagerBottomBar'
+import { loadCraftStrategy, loadDefaultCity, loadMatSource, usePref } from './premium'
+import { useMarketManagerChrome } from './useMarketManagerChrome'
 import { useEnrichedRows, type BaseItem } from './ItemIndex/useEnrichedRows'
 import { buildItemColumns } from './ItemIndex/itemColumns'
 import { DataFreshness } from './DataFreshness'
@@ -18,8 +12,7 @@ import { ItemTableHelp } from './ItemIndex/ItemTableHelp'
 import { StrategyToggles } from './ItemIndex/StrategyToggles'
 
 export function FavouritesPage() {
-  const { isAuthenticated } = useAuth()
-  const { setSidebar, setBottomBar } = useLayoutOverride()
+  useMarketManagerChrome()
   const { items: favourites, isFavourite, toggle } = useItemFavourites()
 
   const [quality, setQuality] = useState(DEFAULT_QUALITY)
@@ -27,18 +20,6 @@ export function FavouritesPage() {
   // Live prefs: the Craft Settings modal (or another page's toggles) updates these too.
   const matSource = usePref(loadMatSource)
   const strategy = usePref(loadCraftStrategy)
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      setSidebar(MarketManagerSidebar)
-      setBottomBar(MarketManagerBottomBar)
-    } else {
-      setSidebar(null)
-      setBottomBar(null)
-    }
-    return () => { setSidebar(null); setBottomBar(null) }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated])
 
   const baseItems = useMemo<BaseItem[]>(
     () => favourites.map(f => ({ id: f.id, name: f.name, tier: f.tier, enchant: f.enchant })),
@@ -52,7 +33,6 @@ export function FavouritesPage() {
       isFavourite,
       onToggleFav: row => toggle({ id: row.id, name: row.name, tier: row.tier, enchant: row.enchant }),
       quality,
-      showCraft: true,
       taxRate,
       strategy,
       fetchedAt,
@@ -83,12 +63,7 @@ export function FavouritesPage() {
           location={location}
           onLocation={setLocation}
         />
-        <StrategyToggles
-          matSource={matSource}
-          onMatSource={saveMatSource}
-          strategy={strategy}
-          onStrategy={saveCraftStrategy}
-        />
+        <StrategyToggles matSource={matSource} strategy={strategy} />
         <span className="text-xs text-[#6b7280] pb-1.5">
           tax {Math.round(taxRate * 100)}% · bonus-aware returns · fees from Craft Settings
         </span>

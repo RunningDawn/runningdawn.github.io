@@ -1,24 +1,7 @@
-import { useEffect } from 'react'
-import { useAuth } from '../../../auth/authContext'
-import { useLayoutOverride } from '../../../components/LayoutOverride'
-import { MarketManagerSidebar } from './MarketManagerSidebar'
-import { MarketManagerBottomBar } from './MarketManagerBottomBar'
+import { useMarketManagerChrome } from './useMarketManagerChrome'
 
 export function PlaceholderPage({ title }: { title: string }) {
-  const { isAuthenticated } = useAuth()
-  const { setSidebar, setBottomBar } = useLayoutOverride()
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      setSidebar(MarketManagerSidebar)
-      setBottomBar(MarketManagerBottomBar)
-    } else {
-      setSidebar(null)
-      setBottomBar(null)
-    }
-    return () => { setSidebar(null); setBottomBar(null) }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated])
+  useMarketManagerChrome()
 
   return (
     <div className="flex flex-col items-center justify-center h-full min-h-[60vh] text-center select-none">

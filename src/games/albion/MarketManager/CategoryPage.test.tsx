@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router'
 import { AuthProvider } from '../../../auth/AuthProvider'
@@ -116,7 +116,7 @@ describe('CategoryPage', () => {
 
     await userEvent.type(screen.getByPlaceholderText(/filter sword items/i), 't5_')
     expect(screen.getAllByText('Broadsword')).toHaveLength(1)
-    expect(screen.getByText('T5')).toBeInTheDocument()
+    expect(within(screen.getByRole('table')).getByText('T5')).toBeInTheDocument()
 
     await userEvent.clear(screen.getByPlaceholderText(/filter sword items/i))
     expect(screen.getAllByText('Broadsword')).toHaveLength(3)
@@ -126,11 +126,11 @@ describe('CategoryPage', () => {
     renderPage()
     await screen.findAllByText('Broadsword')
     // this sword category holds T4 + T5 only - the Tier dropdown must not offer T1-3/T6-8
-    await userEvent.click(screen.getAllByRole('combobox')[0])
-    expect(screen.getByRole('option', { name: 'All' })).toBeInTheDocument()
-    expect(screen.getByRole('option', { name: 'T4' })).toBeInTheDocument()
-    expect(screen.getByRole('option', { name: 'T5' })).toBeInTheDocument()
-    expect(screen.queryByRole('option', { name: 'T3' })).toBeNull()
-    expect(screen.queryByRole('option', { name: 'T6' })).toBeNull()
+    const tierSelect = screen.getAllByRole('combobox')[0]
+    expect(within(tierSelect).getByRole('option', { name: 'All' })).toBeInTheDocument()
+    expect(within(tierSelect).getByRole('option', { name: 'T4' })).toBeInTheDocument()
+    expect(within(tierSelect).getByRole('option', { name: 'T5' })).toBeInTheDocument()
+    expect(within(tierSelect).queryByRole('option', { name: 'T3' })).toBeNull()
+    expect(within(tierSelect).queryByRole('option', { name: 'T6' })).toBeNull()
   })
 })

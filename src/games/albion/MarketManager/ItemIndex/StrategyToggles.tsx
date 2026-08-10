@@ -1,4 +1,4 @@
-import type { CraftStrategy, MatSource } from '../premium'
+import { saveCraftStrategy, saveMatSource, type CraftStrategy, type MatSource } from '../premium'
 
 export function ToggleGroup<T extends string>({
   label,
@@ -31,33 +31,22 @@ export function ToggleGroup<T extends string>({
   )
 }
 
-// The two trading-strategy toggles the cost side of every table runs on. Persisted via
-// premium.ts (localStorage) by the owning page so Item Index / categories / Favourites /
-// detail all agree.
-export function StrategyToggles({
-  matSource,
-  onMatSource,
-  strategy,
-  onStrategy,
-}: {
-  matSource: MatSource
-  onMatSource: (v: MatSource) => void
-  strategy: CraftStrategy
-  onStrategy: (v: CraftStrategy) => void
-}) {
+// The two trading-strategy toggles the cost side of every table runs on. Persisted straight
+// to premium.ts (localStorage) so Item Index / categories / Favourites / detail all agree.
+export function StrategyToggles({ matSource, strategy }: { matSource: MatSource; strategy: CraftStrategy }) {
   return (
     <div className="flex items-center gap-4 flex-wrap">
       <ToggleGroup<MatSource>
         label="Mats"
         value={matSource}
         options={[['sell', 'Instant buy'], ['buy', 'Buy orders']]}
-        onChange={onMatSource}
+        onChange={saveMatSource}
       />
       <ToggleGroup<CraftStrategy>
         label="Craft"
         value={strategy}
         options={[['optimized', 'Optimized'], ['base', 'Base mats']]}
-        onChange={onStrategy}
+        onChange={saveCraftStrategy}
       />
     </div>
   )

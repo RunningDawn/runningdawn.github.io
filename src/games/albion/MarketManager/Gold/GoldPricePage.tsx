@@ -1,13 +1,10 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import {
   AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer,
   LineChart, Line, ReferenceLine, CartesianGrid,
 } from 'recharts'
-import { useAuth } from '../../../../auth/authContext'
-import { useLayoutOverride } from '../../../../components/LayoutOverride'
 import { Modal } from '../../../../components/Modal'
-import { MarketManagerSidebar } from '../MarketManagerSidebar'
-import { MarketManagerBottomBar } from '../MarketManagerBottomBar'
+import { useMarketManagerChrome } from '../useMarketManagerChrome'
 import { useGoldPrice } from './useGoldPrice'
 import { sma, rsi } from './indicators'
 import { recStyle } from './recommendation'
@@ -280,25 +277,10 @@ const PERIODS: { key: Period; label: string }[] = [
 ]
 
 export function GoldPricePage() {
-  const { isAuthenticated } = useAuth()
-  const { setSidebar, setBottomBar } = useLayoutOverride()
+  useMarketManagerChrome()
   const { stats, loading, error } = useGoldPrice()
   const [period, setPeriod] = useState<Period>(168)
   const [helpOpen, setHelpOpen] = useState(false)
-
-  const showMMSidebar = isAuthenticated
-
-  useEffect(() => {
-    if (showMMSidebar) {
-      setSidebar(MarketManagerSidebar)
-      setBottomBar(MarketManagerBottomBar)
-    } else {
-      setSidebar(null)
-      setBottomBar(null)
-    }
-    return () => { setSidebar(null); setBottomBar(null) }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showMMSidebar])
 
   const history = useMemo(() => stats?.history ?? [], [stats?.history])
   const currentPrice = stats?.current ?? null

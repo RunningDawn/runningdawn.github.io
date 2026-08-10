@@ -1,16 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import { useAuth } from '../../../auth/authContext'
-import { useLayoutOverride } from '../../../components/LayoutOverride'
 import { DataTable, type Column } from '../../../components/DataTable'
 import { CITIES, QUALITIES } from '../constants'
 import { ItemIcon } from '../ItemIcon'
-import { MarketManagerSidebar } from './MarketManagerSidebar'
-import { MarketManagerBottomBar } from './MarketManagerBottomBar'
+import { useMarketManagerChrome } from './useMarketManagerChrome'
 import { usePricesWS } from './usePricesWS'
 import {
   loadBvScope, loadCraftStrategy, loadFocus, loadMatSource, loadPremium,
-  saveBvScope, saveCraftStrategy, saveMatSource, usePref, usePrefsVersion,
+  saveBvScope, usePref, usePrefsVersion,
   useOverridesVersion, type BvScope,
 } from './premium'
 import { DataFreshness, ScanIndicator } from './DataFreshness'
@@ -30,8 +27,7 @@ function cityLabel(city: string): string {
 // raw mats bought at Normal quality in the city, the item crafted (or transmuted up) at the
 // optimized cost, resold in the same city. Refetches on every poller cycle via the prices WS.
 export function BestValuePage() {
-  const { isAuthenticated } = useAuth()
-  const { setSidebar, setBottomBar } = useLayoutOverride()
+  useMarketManagerChrome()
 
   const [payload, setPayload] = useState<BestValuePayload | null>(null)
   const [loading, setLoading] = useState(true)
@@ -44,18 +40,6 @@ export function BestValuePage() {
   // premium/focus are read inside the fetch - refetch when the modal flips them.
   const prefsVersion = usePrefsVersion()
   const overridesVersion = useOverridesVersion()
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      setSidebar(MarketManagerSidebar)
-      setBottomBar(MarketManagerBottomBar)
-    } else {
-      setSidebar(null)
-      setBottomBar(null)
-    }
-    return () => { setSidebar(null); setBottomBar(null) }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated])
 
   useEffect(() => {
     let cancelled = false
@@ -223,12 +207,7 @@ export function BestValuePage() {
             options={[['craftable', 'Craftable Items'], ['all', 'All Items']]}
             onChange={saveBvScope}
           />
-          <StrategyToggles
-            matSource={matSource}
-            onMatSource={saveMatSource}
-            strategy={strategy}
-            onStrategy={saveCraftStrategy}
-          />
+          <StrategyToggles matSource={matSource} strategy={strategy} />
           {payload && (
             <span className="text-xs text-[#6b7280]">
               computed {utcDate(payload.computed_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}

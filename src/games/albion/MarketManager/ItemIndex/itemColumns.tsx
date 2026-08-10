@@ -17,22 +17,19 @@ interface ColumnOpts {
   isFavourite: (id: string) => boolean
   onToggleFav: (row: ItemRow) => void
   quality: number
-  showCraft?: boolean
-  taxRate?: number // premium-driven sales tax (salesTaxRate)
-  strategy?: CraftStrategy // which craft cost the profit columns use
-  linkTo?: (row: ItemRow) => string // item name becomes a link (detail page)
+  taxRate: number // premium-driven sales tax (salesTaxRate)
+  strategy: CraftStrategy // which craft cost the profit columns use
+  linkTo: (row: ItemRow) => string // item name links to the detail page
   fetchedAt?: Date | null // anchor for the per-row scan-age dots (no Date.now in render)
   location?: string // the table's single town - enables the manual price-override pencil
 }
 
-// Shared column defs for the Item Index + Favourites tables. Craft/profit columns are appended
-// only when showCraft is set (and a recipe-derived analysis is present on the row).
+// Shared column defs for the Item Index + Favourites tables.
 export function buildItemColumns(opts: ColumnOpts): Column<ItemRow>[] {
-  const taxRate = opts.taxRate ?? 0
-  const strategy = opts.strategy ?? 'optimized'
+  const { taxRate, strategy } = opts
   const costOf = (r: ItemRow) => (strategy === 'base' ? r.craft?.fullBuy : r.craft?.optimal)
 
-  const cols: Column<ItemRow>[] = [
+  return [
     {
       key: 'fav',
       label: '',
@@ -57,13 +54,9 @@ export function buildItemColumns(opts: ColumnOpts): Column<ItemRow>[] {
         <span className="flex items-center gap-2">
           {/* No quality param: keeps one cached icon URL per item across quality flips. */}
           <ItemIcon uniqueName={row.id} size={32} />
-          {opts.linkTo ? (
-            <Link to={opts.linkTo(row)} className="text-[#e2e4ed] hover:text-[#c4af64] transition-colors">
-              {row.name}
-            </Link>
-          ) : (
-            <span className="text-[#e2e4ed]">{row.name}</span>
-          )}
+          <Link to={opts.linkTo(row)} className="text-[#e2e4ed] hover:text-[#c4af64] transition-colors">
+            {row.name}
+          </Link>
         </span>
       ),
     },
@@ -136,50 +129,43 @@ export function buildItemColumns(opts: ColumnOpts): Column<ItemRow>[] {
       sortKey: r => r.price?.buy_price_max ?? -1,
       render: row => priceCell(row.price?.buy_price_max),
     },
+    {
+      key: 'craft_base',
+      label: 'Craft (base)',
+      title: 'Top-level recipe materials bought at current market prices - no sub-crafting',
+      sortKey: r => r.craft?.fullBuy ?? Number.POSITIVE_INFINITY,
+      render: row => costCell(row.craft?.fullBuy),
+    },
+    {
+      key: 'craft',
+      label: 'Craft (optimized)',
+      title: 'Cheapest mix of buy / craft / upgrade across the whole recipe tree',
+      sortKey: r => r.craft?.optimal ?? Number.POSITIVE_INFINITY,
+      render: row => <CraftCell analysis={row.craft} />,
+    },
+    {
+      key: 'profit_sell',
+      label: 'Profit (sell)',
+      title: 'Craft it, list just under the cheapest sell order, pay sales tax. Click a value for the materials to buy. A lone troll ask is valued at the traded average instead.',
+      className: 'font-bold text-[#e2e4ed]',
+      sortKey: r => profit(r.price?.effective_sell ?? r.price?.sell_price_min, costOf(r), taxRate) ?? Number.NEGATIVE_INFINITY,
+      render: row => (
+        <ProfitMaterialsCell
+          analysis={row.craft}
+          revenue={row.price?.effective_sell ?? row.price?.sell_price_min}
+          taxRate={taxRate}
+          strategy={strategy}
+        />
+      ),
+    },
+    {
+      key: 'profit_buy',
+      label: 'Profit (buy)',
+      title: 'Craft it and dump it instantly into the best buy order - the pessimistic floor.',
+      sortKey: r => profit(r.price?.buy_price_max, costOf(r), taxRate) ?? Number.NEGATIVE_INFINITY,
+      render: row => profitCell(profit(row.price?.buy_price_max, costOf(row), taxRate)),
+    },
   ]
-
-  if (opts.showCraft) {
-    cols.push(
-      {
-        key: 'craft_base',
-        label: 'Craft (base)',
-        title: 'Top-level recipe materials bought at current market prices - no sub-crafting',
-        sortKey: r => r.craft?.fullBuy ?? Number.POSITIVE_INFINITY,
-        render: row => costCell(row.craft?.fullBuy),
-      },
-      {
-        key: 'craft',
-        label: 'Craft (optimized)',
-        title: 'Cheapest mix of buy / craft / upgrade across the whole recipe tree',
-        sortKey: r => r.craft?.optimal ?? Number.POSITIVE_INFINITY,
-        render: row => <CraftCell analysis={row.craft} />,
-      },
-      {
-        key: 'profit_sell',
-        label: 'Profit (sell)',
-        title: 'Craft it, list just under the cheapest sell order, pay sales tax. Click a value for the materials to buy. A lone troll ask is valued at the traded average instead.',
-        className: 'font-bold text-[#e2e4ed]',
-        sortKey: r => profit(r.price?.effective_sell ?? r.price?.sell_price_min, costOf(r), taxRate) ?? Number.NEGATIVE_INFINITY,
-        render: row => (
-          <ProfitMaterialsCell
-            analysis={row.craft}
-            revenue={row.price?.effective_sell ?? row.price?.sell_price_min}
-            taxRate={taxRate}
-            strategy={strategy}
-          />
-        ),
-      },
-      {
-        key: 'profit_buy',
-        label: 'Profit (buy)',
-        title: 'Craft it and dump it instantly into the best buy order - the pessimistic floor.',
-        sortKey: r => profit(r.price?.buy_price_max, costOf(r), taxRate) ?? Number.NEGATIVE_INFINITY,
-        render: row => profitCell(profit(row.price?.buy_price_max, costOf(row), taxRate)),
-      },
-    )
-  }
-
-  return cols
 }
 
 function priceCell(v: number | undefined, custom = false, suspectRawAsk?: number): ReactNode {

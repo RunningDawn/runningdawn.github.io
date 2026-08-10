@@ -5,7 +5,9 @@ import { isResource } from './ItemIndex/itemMeta'
 import type { CraftSettings } from './ItemIndex/types'
 
 // Mirrors forge-api craft_settings.py: resource return rates derived from production
-// bonuses via return = 1 - 1/(1 + bonus); focus adds +59% bonus.
+// bonuses via return = 1 - 1/(1 + bonus); focus adds +59% bonus. The economics half
+// (RETURN_RATES through NUTRITION_PER_ITEM_VALUE) also mirrors forge-web
+// .../albion/shared/crafting/craftEconomics.ts - change all three in lockstep.
 export const RETURN_RATES = {
   base: 15.2,
   refining: 36.7,

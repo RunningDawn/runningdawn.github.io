@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
+import { NativeSelect } from '../../../components/NativeSelect'
 import { CITIES, CITY_BONUSES, STATION_TYPES } from '../constants'
 import {
   loadCraftStrategy, loadDefaultCity, loadFocus, loadMatSource, loadPremium,
-  saveCraftStrategy, saveDefaultCity, saveFocus, saveMatSource, savePremium,
+  saveDefaultCity, saveFocus, savePremium,
   usePref,
 } from './premium'
 import { updateCachedSettings } from './craftEconomics'
@@ -135,20 +136,11 @@ export function CraftSettingsPanel() {
         </span>
         <label className="flex items-center gap-2 text-sm text-[#e2e4ed]">
           Default town
-          <select
-            value={defaultCity}
-            onChange={e => saveDefaultCity(e.target.value)}
-            className="bg-[#0f1117] border border-[#2a2d3a] rounded px-2 py-1.5 text-xs text-[#e2e4ed] focus:outline-none focus:border-[#c4af64] cursor-pointer"
-          >
+          <NativeSelect value={defaultCity} onChange={e => saveDefaultCity(e.target.value)}>
             {CITIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
-          </select>
+          </NativeSelect>
         </label>
-        <StrategyToggles
-          matSource={matSource}
-          onMatSource={saveMatSource}
-          strategy={strategy}
-          onStrategy={saveCraftStrategy}
-        />
+        <StrategyToggles matSource={matSource} strategy={strategy} />
         <span className="text-xs text-[#4a4d5a] w-full sm:w-auto">saved on this device only</span>
       </div>
 

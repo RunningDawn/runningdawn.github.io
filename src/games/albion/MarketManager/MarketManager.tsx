@@ -1,26 +1,9 @@
-import { useEffect } from 'react'
 import { mmAccess, useAuth } from '../../../auth/authContext'
-import { useLayoutOverride } from '../../../components/LayoutOverride'
-import { MarketManagerSidebar } from './MarketManagerSidebar'
-import { MarketManagerBottomBar } from './MarketManagerBottomBar'
+import { useMarketManagerChrome } from './useMarketManagerChrome'
 
 export function MarketManager() {
   const { user, loading, isAuthenticated, login } = useAuth()
-  const { setSidebar, setBottomBar } = useLayoutOverride()
-
-  const showMMSidebar = isAuthenticated
-
-  useEffect(() => {
-    if (showMMSidebar) {
-      setSidebar(MarketManagerSidebar)
-      setBottomBar(MarketManagerBottomBar)
-    } else {
-      setSidebar(null)
-      setBottomBar(null)
-    }
-    return () => { setSidebar(null); setBottomBar(null) }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showMMSidebar])
+  useMarketManagerChrome()
 
   if (loading) {
     return (

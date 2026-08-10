@@ -108,15 +108,6 @@ export interface PriceOverrideEntry {
   at?: string | null
 }
 
-export interface PriceOverridesPayload {
-  overrides: Record<string, PriceOverrideEntry>
-  updated_at: string | null
-}
-
-export async function fetchPriceOverrides(): Promise<Envelope<PriceOverridesPayload>> {
-  return albionFetch<PriceOverridesPayload>('/game/albion/price-overrides')
-}
-
 export async function savePriceOverride(
   itemId: string, city: string, quality: number, sellPriceMin: number,
 ): Promise<Envelope<PriceOverrideEntry>> {

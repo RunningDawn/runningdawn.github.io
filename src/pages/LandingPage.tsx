@@ -1,8 +1,6 @@
 import { useEffect } from 'react'
 import { Link } from 'react-router'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faGithub, faSteam, faDiscord } from '@fortawesome/free-brands-svg-icons'
-import { faCalendarDays } from '@fortawesome/free-solid-svg-icons'
+import { GitHubIcon, SteamIcon, DiscordIcon, CalendarIcon } from '../components/Icons'
 import { useLandingStyles } from '../hooks/useLandingStyles'
 
 function LandingPage() {
@@ -52,10 +50,10 @@ function LandingPage() {
           <h1 style={{ color: 'black' }}>Running Dawn</h1>
           <nav className="links">
             <ul>
-              <li><a href="https://github.com/RunningDawn" className="icon"><FontAwesomeIcon icon={faGithub} /></a></li>
-              <li><a href="https://steamcommunity.com/groups/RunningDawn" className="icon"><FontAwesomeIcon icon={faSteam} /></a></li>
-              <li><a href="https://discord.gg/runningdawn" className="icon"><FontAwesomeIcon icon={faDiscord} /></a></li>
-              <li><a onClick={openEvents} className="icon" style={{ cursor: 'pointer' }} title="Events"><FontAwesomeIcon icon={faCalendarDays} /></a></li>
+              <li><a href="https://github.com/RunningDawn" className="icon"><GitHubIcon /></a></li>
+              <li><a href="https://steamcommunity.com/groups/RunningDawn" className="icon"><SteamIcon /></a></li>
+              <li><a href="https://discord.gg/runningdawn" className="icon"><DiscordIcon /></a></li>
+              <li><a onClick={openEvents} className="icon" style={{ cursor: 'pointer' }} title="Events"><CalendarIcon /></a></li>
             </ul>
           </nav>
           <nav className="games">

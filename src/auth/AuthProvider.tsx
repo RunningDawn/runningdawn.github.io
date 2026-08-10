@@ -12,11 +12,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null)
   const [loading, setLoading] = useState(true)
 
-  const clearAuth = useCallback(() => {
-    localStorage.removeItem(TOKEN_KEY)
-    setUser(null)
-  }, [])
-
   useEffect(() => {
     setOnUnauthenticated(() => {
       localStorage.removeItem(TOKEN_KEY)
@@ -83,7 +78,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, loading, isAuthenticated: user !== null, login, logout, clearAuth }}>
+    <AuthContext.Provider value={{ user, loading, isAuthenticated: user !== null, login, logout }}>
       {children}
     </AuthContext.Provider>
   )

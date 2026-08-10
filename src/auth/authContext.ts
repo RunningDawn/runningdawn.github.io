@@ -28,7 +28,6 @@ export interface AuthContextType {
   isAuthenticated: boolean
   login: () => void
   logout: () => Promise<void>
-  clearAuth: () => void
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null)

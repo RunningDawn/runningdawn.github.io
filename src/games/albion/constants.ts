@@ -10,9 +10,6 @@ export const CITIES: { value: string; label: string }[] = [
   { value: 'Brecilien', label: 'Brecilien' },
 ]
 
-// Fallback only - pages read the per-user default via premium.ts loadDefaultCity().
-export const DEFAULT_CITY = 'Bridgewatch'
-
 // Item quality tiers. Drives the prices request + display.
 export const QUALITIES: { value: number; label: string }[] = [
   { value: 1, label: 'Normal' },

@@ -21,7 +21,3 @@ export function BottomBar({ children }: { children?: React.ReactNode }) {
     </footer>
   )
 }
-
-export function BottomBarDivider() {
-  return <span className="text-[#2a2d3a] select-none">|</span>
-}

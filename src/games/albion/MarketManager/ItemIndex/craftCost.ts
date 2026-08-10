@@ -1,5 +1,8 @@
 import type { CraftAnalysis, CraftMaterial, RecipeNode } from './types'
 
+// Byte-identical copy in forge-web src/forge/games/albion/shared/crafting/craftCost.ts
+// (and its .test.ts) - change both in lockstep.
+
 // Market acquisition cost of an item (what you pay to BUY one): the lowest sell-order price.
 // Returns null when no price is known (can't buy / can't craft through it).
 export type PriceOf = (id: string) => number | null
