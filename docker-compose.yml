@@ -8,7 +8,6 @@ services:
   localdev:
     container_name: runningdawn-localdev
     build: .
-    env_file: .env.local
     ports:
       - '5174:5174'
     environment:

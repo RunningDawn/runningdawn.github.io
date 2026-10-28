@@ -9,7 +9,8 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>,
 )
 
-// Pins Albion item icons in the Cache API forever (see public/icon-sw.js).
+// Drop the retired icon cache worker for returning visitors.
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/icon-sw.js').catch(() => {})
+  navigator.serviceWorker.getRegistrations().then((rs) => rs.forEach((r) => r.unregister()))
+  caches?.delete('albion-icons-v1')
 }

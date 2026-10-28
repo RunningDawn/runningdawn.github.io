@@ -1,5 +1,4 @@
 import { useEffect } from 'react'
-import { Link } from 'react-router'
 import { GitHubIcon, SteamIcon, DiscordIcon, CalendarIcon } from '../components/Icons'
 import { useLandingStyles } from '../hooks/useLandingStyles'
 
@@ -54,11 +53,6 @@ function LandingPage() {
               <li><a href="https://steamcommunity.com/groups/RunningDawn" className="icon"><SteamIcon /></a></li>
               <li><a href="https://discord.gg/runningdawn" className="icon"><DiscordIcon /></a></li>
               <li><a onClick={openEvents} className="icon" style={{ cursor: 'pointer' }} title="Events"><CalendarIcon /></a></li>
-            </ul>
-          </nav>
-          <nav className="games">
-            <ul>
-              <li className="albion-tile"><Link to="/albion" className="game">Albion</Link></li>
             </ul>
           </nav>
         </header>

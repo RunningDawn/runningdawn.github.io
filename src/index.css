@@ -1,20 +1,5 @@
 @import "tailwindcss";
 
-@theme {
-  --color-forge-bg: #0f1117;
-  --color-forge-surface: #1a1d27;
-  --color-forge-border: #2a2d3a;
-  --color-forge-accent: #c4af64;
-  --color-forge-text: #e2e4ed;
-  --color-forge-muted: #6b7280;
-  --animate-marquee: marquee 240s linear infinite;
-}
-
-@keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
 /* ─── Reset ─────────────────────────────────────────────────────────────── */
 
 @layer base {
@@ -25,7 +10,7 @@
   }
 
   /* Kept in @layer base so the landing page's own (unlayered) template styles
-     in App.css win on `/`, while the albion app still gets these defaults. */
+     in App.css win on `/`. */
   body {
     background: #0f1117;
     color: #e2e4ed;
@@ -34,8 +19,7 @@
   }
 }
 
-/* #root fills the viewport for the albion app shell (flex layout lives inside
-   ForgeLayout via h-full). No display:flex here — that broke the landing template. */
+/* #root fills the viewport. No display:flex here, it broke the landing template. */
 #root {
   height: 100dvh;
   overflow: hidden;
@@ -87,95 +71,4 @@ textarea {
   transition-property: color, background-color, border-color, box-shadow, opacity;
   transition-duration: 150ms;
   transition-timing-function: ease;
-}
-
-/* ─── Shared component classes ───────────────────────────────────────────── */
-
-@layer components {
-
-  /* Surface card - wraps grouped tool inputs/outputs */
-  .forge-card {
-    @apply bg-forge-surface border border-forge-border rounded-lg p-6;
-  }
-
-  /* Muted field label above an input or select */
-  .forge-label {
-    @apply block text-xs text-forge-muted mb-1;
-  }
-
-  /* Text input and select field */
-  .forge-input {
-    @apply bg-forge-bg border border-forge-border text-forge-text rounded
-           px-3 py-2 text-sm w-full
-           focus:outline-none focus:border-forge-accent;
-  }
-
-  /* Monospaced variant of forge-input (for numeric / code inputs) */
-  .forge-input-mono {
-    @apply bg-forge-bg border border-forge-border text-forge-text rounded
-           px-3 py-2 text-sm w-full font-mono
-           focus:outline-none focus:border-forge-accent;
-  }
-
-  /* Pill / tab button - inactive state */
-  .forge-btn {
-    @apply px-3 py-1.5 rounded text-sm
-           bg-forge-surface text-forge-muted border border-forge-border
-           hover:text-forge-text hover:bg-forge-border;
-  }
-
-  /* Pill / tab button - active / selected state */
-  .forge-btn-active {
-    @apply px-3 py-1.5 rounded text-sm font-medium
-           bg-forge-accent text-white border border-transparent;
-  }
-
-  /* Result display block - sits below a divider inside a forge-card */
-  .forge-result {
-    @apply pt-2 pb-4 border-t border-forge-border;
-  }
-
-  /* Result value - large mono number in accent color */
-  .forge-result-value {
-    @apply text-2xl font-mono text-forge-accent;
-  }
-
-  /* Section heading label above a result */
-  .forge-result-label {
-    @apply text-xs text-forge-muted mb-1;
-  }
-
-  /* ── Sidebar nav link ── */
-
-  /*
-    Active: gold right-border stripe + very subtle gold bg tint.
-    The stripe sits on the right edge of the sidebar item (inner-right of
-    the sidebar panel), visually pointing toward the active content area.
-  */
-  .forge-nav-link {
-    @apply block px-4 py-2 text-sm
-           text-forge-muted
-           hover:text-forge-text hover:bg-forge-border;
-  }
-
-  .forge-nav-link-active {
-    @apply block px-4 py-2 text-sm
-           text-forge-accent border-r-2 border-forge-accent;
-    background-color: rgb(196 175 100 / 0.08);
-  }
-
-  /* ── Bottom bar ── */
-
-  /*
-    The bottom bar is a shrink-0 flex sibling of <main> inside the content
-    column - it naturally stays fixed-height at the bottom without needing
-    position:fixed or a z-index. This class codifies the visual weight only.
-  */
-  .forge-bottom-bar {
-    @apply h-7 shrink-0
-           bg-forge-surface border-t border-forge-border
-           flex items-center px-4 gap-6
-           text-xs text-forge-muted;
-  }
-
 }

@@ -3,10 +3,8 @@ import react from '@vitejs/plugin-react-swc'
 
 export default defineConfig({
   plugins: [react()],
-  define: {
-    __API_URL__: JSON.stringify(process.env.FORGE_API_URL || 'https://api.forgehaven.io'),
-  },
   test: {
+    passWithNoTests: true,
     environment: 'jsdom',
     setupFiles: ['./src/test-setup.ts'],
     globals: true,
