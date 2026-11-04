@@ -16,7 +16,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   )
 }
 
-const opts = (list: readonly string[]): SelectOption[] => list.map(v => ({ value: v, label: v }))
+const opts = (list: readonly string[]): SelectOption[] => [...list].sort().map(v => ({ value: v, label: v }))
 const find = (list: SelectOption[], v: string) => list.find(o => o.value === v) ?? null
 
 const FACTION_OPTS = opts(FACTIONS)

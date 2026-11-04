@@ -1,7 +1,7 @@
 import { Select, type SelectOption } from '../../components/Select'
 import { PROFESSIONS } from './roster'
 
-const OPTIONS: SelectOption[] = PROFESSIONS.map(p => ({ value: p, label: p }))
+const OPTIONS: SelectOption[] = [...PROFESSIONS].sort().map(p => ({ value: p, label: p }))
 
 interface Props {
   value: string[]
