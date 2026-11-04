@@ -140,7 +140,8 @@ function Editor() {
     const base = { on: mine, bg: usingDefault && mine ? '#c4af6480' : undefined, glow: glow?.has(k), mark: ev.length > 0, title: ev.length ? ev.join(', ') : undefined }
     const c = guild?.slots[k]
     if (!showGuild || !c) return base
-    return { ...base, label: c.total, bg: mine ? base.bg : `rgba(34,197,94,${0.12 + 0.6 * c.total / guildMax})` }
+    // Dark ink on solid gold (your saved picks); light ink everywhere else.
+    return { ...base, label: c.total, ink: mine && !usingDefault ? '#1a1406' : undefined, bg: mine ? base.bg : `rgba(34,197,94,${0.12 + 0.6 * c.total / guildMax})` }
   }
   const hoverKey = hover && typeof tab === 'number' ? slotKey(instant(hover.wd, hover.h)) : null
   const hovered = hoverKey && showGuild ? guild?.slots[hoverKey] : undefined

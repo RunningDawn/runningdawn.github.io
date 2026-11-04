@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react'
 import { DAYS, hourLabel } from './weekTime'
 
-// mark = event outline, glow = highlighted window, label = small count in the cell.
-export interface GridCell { on: boolean; bg?: string; title?: string; mark?: boolean; glow?: boolean; label?: string | number }
+// mark = event outline, glow = highlighted window, label = small count in the cell (ink = its colour).
+export interface GridCell { on: boolean; bg?: string; title?: string; mark?: boolean; glow?: boolean; label?: string | number; ink?: string }
 
 interface Props {
   cell: (weekday: number, hour: number) => GridCell
@@ -37,11 +37,11 @@ export function HourGrid({ cell, onPaint, onHover }: Props) {
                 aria-label={`${d} ${hourLabel(h)}`}
                 aria-pressed={c.on}
                 title={c.title}
-                className={`h-5 rounded-sm border border-[#1f2230] text-[9px] leading-none font-semibold text-[#e2e4ed] ${onPaint ? 'cursor-pointer' : 'cursor-default'}`}
+                className={`h-5 rounded-sm border border-[#1f2230] text-[9px] leading-none font-semibold ${onPaint ? 'cursor-pointer' : 'cursor-default'}`}
                 style={{
                   background: c.bg ?? (c.on ? '#c4af64' : '#141620'), outline: c.mark ? '2px solid #60a5fa' : undefined, outlineOffset: '-2px',
                   boxShadow: c.glow ? '0 0 0 2px #f8fafc, 0 0 8px 1px #f8fafc' : undefined, zIndex: c.glow ? 1 : undefined, position: c.glow ? 'relative' : undefined,
-                  textShadow: c.label ? '0 0 2px #000' : undefined,
+                  color: c.ink ?? '#e2e4ed', textShadow: c.label && !c.ink ? '0 0 2px #000' : undefined,
                 }}
                 onMouseDown={onPaint && (e => { e.preventDefault(); mode.current = !c.on; onPaint(wd, h, mode.current) })}
                 onMouseEnter={() => { onHover?.(wd, h); if (onPaint && mode.current !== null) onPaint(wd, h, mode.current) }}
