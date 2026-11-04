@@ -8,7 +8,6 @@ import {
   guildUpdateCharacter, type GuildRosterEntry,
 } from './api'
 import { useWowfAccess } from './access'
-import { WowfGate } from './WowfGate'
 import { CharacterForm } from './CharacterForm'
 import { ProfessionSelect } from './ProfessionSelect'
 import { RoleBadge, SpecIcon } from './eventUi'
@@ -347,11 +346,9 @@ export function GuildRoster() {
   return (
     <div className="space-y-6">
       {!leadership && <h1 className="text-xl font-semibold text-[#e2e4ed]">Guild Roster</h1>}
-      <WowfGate>
         {leadership
           ? <Table />
           : <p className="text-sm text-red-400">This page is for WoW guild leadership.</p>}
-      </WowfGate>
     </div>
   )
 }

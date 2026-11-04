@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from 'react'
 import { STORAGE_KEYS } from '../../config/storageKeys'
 import { createCharacter, deleteCharacter, listCharacters, putOrder, restoreCharacter, updateCharacter } from './api'
 import { useWowfAccess } from './access'
-import { WowfGate } from './WowfGate'
 import { CharacterCard } from './CharacterCard'
 import { CharacterForm } from './CharacterForm'
 import { CLASS_COLORS, fromApi, newCharacter, reorder, sanitize, toApi, type WowfCharacter } from './roster'
@@ -25,9 +24,7 @@ export function CharacterRoster() {
         <h1 className="text-xl font-semibold text-[#e2e4ed]">Character Roster</h1>
         <p className="text-sm text-[#6b7280]">Your WoW: Forever characters, as the guild sees them.<br />Drag cards to reorder; your main leads the raid roster and is set by leadership.</p>
       </div>
-      <WowfGate>
         <RosterEditor />
-      </WowfGate>
     </div>
   )
 }

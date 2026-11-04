@@ -3,7 +3,6 @@ import { Link } from 'react-router'
 import { DataTable, type Column } from '../../components/DataTable'
 import { Select, type SelectOption } from '../../components/Select'
 import { listDrops, listEvents, type ApiDrop, type ApiEvent } from './api'
-import { WowfGate } from './WowfGate'
 import { formatWhen } from './eventTime'
 import { DropKind, Spinner } from './eventUi'
 import { CLASS_COLORS } from './roster'
@@ -74,9 +73,7 @@ export function LootHistory() {
         <h1 className="text-xl font-semibold text-[#e2e4ed]">Loot History</h1>
         <p className="text-sm text-[#6b7280]">Everything that dropped on guild raids and who took it. SR wins show the +X the winner had at the time.</p>
       </div>
-      <WowfGate>
         <History />
-      </WowfGate>
     </div>
   )
 }

@@ -8,7 +8,6 @@ import {
   type ApiEvent, type ApiItem, type ApiReserveWithEvent,
 } from './api'
 import { useWowfAccess } from './access'
-import { WowfGate } from './WowfGate'
 import { formatWhen } from './eventTime'
 import { Spinner } from './eventUi'
 import { CLASS_COLORS, RESERVE_OUTCOMES } from './roster'
@@ -112,9 +111,7 @@ export function SrAdmin() {
         <h1 className="text-xl font-semibold text-[#e2e4ed]">SR+ Admin</h1>
         <p className="text-sm text-[#6b7280]">Every reserve across the guild. Set outcomes after the loot drops; a win ends that character's streak (+10 per consecutive reserve) on the item.</p>
       </div>
-      <WowfGate>
         {leadership ? <Admin /> : <p className="text-sm text-red-400">This page is for WoW guild leadership.</p>}
-      </WowfGate>
     </div>
   )
 }

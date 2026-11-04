@@ -5,7 +5,6 @@ import { getEvent, listCharacters, listEvents, type ApiEventDetail } from './api
 import { formatWhen } from './eventTime'
 import { CancelledBadge, CharacterOptionLabel, CompositionLine, KindBadge, Spinner, StyleBadge } from './eventUi'
 import { SignupCard } from './SignupCard'
-import { WowfGate } from './WowfGate'
 import { eventComposition, eventStyle, type ApiCharacter } from './roster'
 
 function Upcoming() {
@@ -85,7 +84,7 @@ export function Register() {
         <h1 className="text-xl font-semibold text-[#e2e4ed]">Event Registration</h1>
         <p className="text-sm text-[#6b7280]">Sign a character up for upcoming raids, PvP nights and other events. Raids need a sign-up before SR+ reserves.</p>
       </div>
-      <WowfGate><Upcoming /></WowfGate>
+      <Upcoming />
     </div>
   )
 }

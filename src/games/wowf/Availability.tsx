@@ -3,7 +3,6 @@ import { Select, type SelectOption } from '../../components/Select'
 import { getMyAvailability, putAvailabilitySettings, putWeeks, type ApiAvailability } from './api'
 import { HourGrid } from './HourGrid'
 import { Spinner } from './eventUi'
-import { WowfGate } from './WowfGate'
 import {
   DAY, WEEK, browserTz, cellInstant, isoDate, localMonday, slotInstant, slotKey, offsetMinutes, toSlot, tzOffset, tzOptions, utcMonday, weekLabel,
 } from './weekTime'
@@ -166,7 +165,7 @@ export function Availability() {
         <h1 className="text-xl font-semibold text-[#e2e4ed]">Availability</h1>
         <p className="text-sm text-[#6b7280]">Mark the hours you can play, week by week. Leadership plans events around the heatmap this builds.</p>
       </div>
-      <WowfGate><Editor /></WowfGate>
+      <Editor />
     </div>
   )
 }

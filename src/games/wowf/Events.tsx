@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { createEvent, listEvents, type ApiEvent, type EventBody } from './api'
 import { useWowfAccess } from './access'
-import { WowfGate } from './WowfGate'
 import { EventForm } from './EventForm'
 import { EventList } from './EventList'
 import { Spinner } from './eventUi'
@@ -48,9 +47,7 @@ export function Events() {
       <div>
         <h1 className="text-xl font-semibold text-[#e2e4ed]">Events</h1>
       </div>
-      <WowfGate>
         {leadership ? <Manager /> : <p className="text-sm text-red-400">This page is for WoW guild leadership.</p>}
-      </WowfGate>
     </div>
   )
 }

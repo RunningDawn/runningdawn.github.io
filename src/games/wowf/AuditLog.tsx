@@ -4,7 +4,6 @@ import { DataTable, type Column } from '../../components/DataTable'
 import { Select, type SelectOption } from '../../components/Select'
 import { getAudit, getAuditFacets, type ApiAudit, type ApiAuditFacets } from './api'
 import { useWowfAccess } from './access'
-import { WowfGate } from './WowfGate'
 import { formatWhen } from './eventTime'
 import { Spinner } from './eventUi'
 
@@ -139,9 +138,7 @@ export function AuditLog() {
       <div>
         <h1 className="text-xl font-semibold text-[#e2e4ed]">Audit Log</h1>
       </div>
-      <WowfGate>
         {leadership ? <Log /> : <p className="text-sm text-red-400">This page is for WoW guild leadership.</p>}
-      </WowfGate>
     </div>
   )
 }

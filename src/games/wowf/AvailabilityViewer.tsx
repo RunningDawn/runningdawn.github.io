@@ -3,7 +3,6 @@ import { getHeatmap, getMyAvailability, listEvents, type ApiEvent, type ApiHeatm
 import { useWowfAccess } from './access'
 import { HourGrid } from './HourGrid'
 import { Spinner } from './eventUi'
-import { WowfGate } from './WowfGate'
 import { roleCounts, roleSummary } from './roster'
 import { DAY, DAYS, WEEK, browserTz, cellInstant, hourLabel, isoDate, localMonday, slotKey, utcMonday, weekLabel } from './weekTime'
 
@@ -132,7 +131,7 @@ export function AvailabilityViewer() {
       <div>
         <h1 className="text-xl font-semibold text-[#e2e4ed]">Availability Viewer</h1>
       </div>
-      <WowfGate>{leadership ? <Viewer /> : <p className="text-sm text-red-400">Leadership only.</p>}</WowfGate>
+      {leadership ? <Viewer /> : <p className="text-sm text-red-400">Leadership only.</p>}
     </div>
   )
 }

@@ -9,7 +9,6 @@ import {
   uploadItemImage, type ApiBoss, type ApiItem, type ApiRaid, type ItemBody, type RaidBody,
 } from './api'
 import { useWowfAccess } from './access'
-import { WowfGate } from './WowfGate'
 import { ClassBadges, HardReserveBadge, Spinner } from './eventUi'
 import { CLASSES, SLOTS, reorder } from './roster'
 
@@ -383,9 +382,7 @@ export function Raids() {
         <h1 className="text-xl font-semibold text-[#e2e4ed]">Raids</h1>
         <p className="text-sm text-[#6b7280]">The loot catalog: each raid, its bosses in kill order, and the items people can reserve.</p>
       </div>
-      <WowfGate>
         {leadership ? <Manager /> : <p className="text-sm text-red-400">This page is for WoW guild leadership.</p>}
-      </WowfGate>
     </div>
   )
 }

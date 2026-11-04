@@ -9,7 +9,6 @@ import {
   type ApiEventDetail, type ApiRaid, type EventBody, type ItemOption, type ReserveCharacter,
 } from './api'
 import { useWowfAccess } from './access'
-import { WowfGate } from './WowfGate'
 import { EventForm } from './EventForm'
 import { formatWhen } from './eventTime'
 import { CancelledBadge, CompositionLine, DropRow, ItemOptionLabel, KindBadge, OutcomeTag, ReserveGroups, Spinner, StyleBadge } from './eventUi'
@@ -333,9 +332,7 @@ export function EventManage() {
   const { leadership } = useWowfAccess()
   return (
     <div className="max-w-3xl space-y-6">
-      <WowfGate>
         {leadership ? <Manage eventId={eventId} /> : <p className="text-sm text-red-400">This page is for WoW guild leadership.</p>}
-      </WowfGate>
     </div>
   )
 }

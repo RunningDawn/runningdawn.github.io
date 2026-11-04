@@ -7,7 +7,6 @@ import {
   type ApiEventDetail, type ApiRaid, type ApiReserve, type ItemOption, type ReserveCharacter,
 } from './api'
 import { useWowfAccess } from './access'
-import { WowfGate } from './WowfGate'
 import { formatWhen } from './eventTime'
 import { CancelledBadge, DropRow, ItemOptionLabel, KindBadge, LootTable, ReserveGroups, Spinner, StyleBadge } from './eventUi'
 import { CLASS_COLORS, eventStyle } from './roster'
@@ -182,9 +181,7 @@ export function LootEvent() {
   const { eventId = '' } = useParams()
   return (
     <div className="max-w-3xl space-y-6">
-      <WowfGate>
         <Detail eventId={eventId} />
-      </WowfGate>
     </div>
   )
 }

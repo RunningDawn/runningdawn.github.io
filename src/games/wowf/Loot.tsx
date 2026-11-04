@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Select, type SelectOption } from '../../components/Select'
 import { getPresets, itemGroups, listCharacters, listEvents, listRaids, putPresets, type ApiEvent, type ApiRaid, type ItemOption } from './api'
-import { WowfGate } from './WowfGate'
 import { EventList } from './EventList'
 import { ItemOptionLabel, Spinner } from './eventUi'
 import { MAX_RESERVE_LIMIT, type ApiCharacter } from './roster'
@@ -121,7 +120,6 @@ export function Loot() {
         <h1 className="text-xl font-semibold text-[#e2e4ed]">SR+ (Loot)</h1>
         <p className="text-sm text-[#6b7280]">Set the reserves each character wants, then open a raid. Register on Event Registration (or on the raid itself) before placing reserves.</p>
       </div>
-      <WowfGate>
         <section className="space-y-3">
           <h3 className="forge-label">My reserves</h3>
           <Presets />
@@ -130,7 +128,6 @@ export function Loot() {
           <h3 className="forge-label">Raids</h3>
           <RaidList />
         </section>
-      </WowfGate>
     </div>
   )
 }
