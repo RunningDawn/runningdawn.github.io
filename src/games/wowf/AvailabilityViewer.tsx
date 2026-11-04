@@ -3,10 +3,34 @@ import { getHeatmap, getMyAvailability, listEvents, type ApiEvent, type ApiHeatm
 import { useWowfAccess } from './access'
 import { HourGrid } from './HourGrid'
 import { Spinner } from './eventUi'
-import { roleCounts, roleSummary } from './roster'
+import { bucketOf, roleCounts } from './roster'
 import { DAY, DAYS, WEEK, browserTz, onTzChange, cellInstant, hourLabel, isoDate, localMonday, slotKey, utcMonday, weekLabel } from './weekTime'
 
 const WEEKS = 4
+
+// Role buckets for the hover panel: text colour, dot colour, label.
+const ROLE_TILES = [
+  { key: 'tank', label: 'Tanks', text: 'text-sky-300', dot: 'bg-sky-400' },
+  { key: 'healer', label: 'Healers', text: 'text-green-300', dot: 'bg-green-400' },
+  { key: 'dps', label: 'DPS', text: 'text-red-300', dot: 'bg-red-400' },
+  { key: 'none', label: 'No role', text: 'text-[#9ca3af]', dot: 'bg-[#6b7280]' },
+] as const
+const tileOf = (role: string | null | undefined) => ROLE_TILES.find(t => t.key === (bucketOf(role) ?? 'none'))!
+
+function RoleTiles({ roles }: { roles: (string | null | undefined)[] }) {
+  const c = roleCounts(roles)
+  const count = { ...c, none: roles.length - c.tank - c.healer - c.dps }
+  return (
+    <div className="grid grid-cols-2 gap-1.5">
+      {ROLE_TILES.map(t => (
+        <div key={t.key} className={`flex items-baseline justify-between rounded bg-[#0f1117] px-2 py-1 ${count[t.key] ? '' : 'opacity-40'}`}>
+          <span className={`text-xs ${t.text}`}>{t.label}</span>
+          <span className="text-sm font-semibold text-[#e2e4ed]">{count[t.key]}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
 
 function Viewer() {
   const [tz, setTz] = useState(browserTz)
@@ -16,7 +40,7 @@ function Viewer() {
   const [picked, setPicked] = useState<Set<string>>(new Set())
   const [hover, setHover] = useState<{ wd: number; h: number } | null>(null)
   const [events, setEvents] = useState<ApiEvent[]>([])
-  const [showEvents, setShowEvents] = useState(false)
+  const [showEvents, setShowEvents] = useState(true)
 
   const firstWall = useMemo(() => localMonday(new Date(), tz), [tz])
   const rangeStart = useMemo(() => utcMonday(cellInstant(firstWall, 0, 0, tz)), [firstWall, tz])
@@ -109,10 +133,15 @@ function Viewer() {
             ? (
               <>
                 <p className="text-[#e2e4ed]">{DAYS[hover.wd]} {hourLabel(hover.h)} &middot; {hovered.length} available</p>
-                <p className="text-xs text-[#9ca3af]">{roleSummary(roleCounts(hovered.map(id => roles.get(id))), hovered.length)}</p>
+                <div className="my-2"><RoleTiles roles={hovered.map(id => roles.get(id))} /></div>
                 {hoveredEvents.length > 0 && <p className="text-xs text-sky-300">Event: {hoveredEvents.join(', ')}</p>}
                 <ul className="mt-2 space-y-0.5 text-xs text-[#9ca3af]">
-                  {hovered.map(id => <li key={id} className={picked.has(id) ? 'text-[#c4af64]' : ''}>{names.get(id) ?? id}</li>)}
+                  {hovered.map(id => (
+                    <li key={id} className={`flex items-center gap-1.5 ${picked.has(id) ? 'text-[#c4af64]' : ''}`}>
+                      <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${tileOf(roles.get(id)).dot}`} title={roles.get(id) ?? 'No role'} />
+                      {names.get(id) ?? id}
+                    </li>
+                  ))}
                 </ul>
               </>
             )

@@ -1,4 +1,5 @@
 import { useEffect, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 
 interface ModalProps {
   open: boolean
@@ -18,7 +19,9 @@ export function Modal({ open, onClose, title, children, maxWidth = 'max-w-md' }:
 
   if (!open) return null
 
-  return (
+  // Portal to <body> so no ancestor's styles (nowrap cells, transformed drag
+  // cards, overflow) leak into the dialog or its fixed positioning.
+  return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
       onClick={onClose}
@@ -37,8 +40,9 @@ export function Modal({ open, onClose, title, children, maxWidth = 'max-w-md' }:
             ×
           </button>
         </div>
-        <div className="overflow-y-auto min-h-0">{children}</div>
+        <div className="overflow-y-auto min-h-0 break-words">{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }

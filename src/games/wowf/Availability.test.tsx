@@ -158,8 +158,15 @@ describe('Availability Viewer (leadership)', () => {
     expect(within(panel).getByText(/Mon 20:00 · 2 available/)).toBeInTheDocument()
     expect(within(panel).getByText('Jak')).toBeInTheDocument()
     expect(within(panel).getByText('Pat')).toBeInTheDocument()
-    expect(within(panel).getByText('1 Tank, 1 Healer, 0 DPS')).toBeInTheDocument()
+    const tile = (label: string) => within(panel).getByText(label).parentElement!
+    expect(tile('Tanks')).toHaveTextContent('Tanks1')
+    expect(tile('Healers')).toHaveTextContent('Healers1')
+    expect(tile('DPS')).toHaveTextContent('DPS0')
+    expect(tile('No role')).toHaveTextContent('No role0')
 
+    // Events show by default; the checkbox hides them.
+    expect(cell('Sat 15:00')).toHaveAttribute('title', 'MC night')
+    await user.click(screen.getByRole('checkbox', { name: 'Show events' }))
     expect(cell('Sat 15:00')).not.toHaveAttribute('title')
     await user.click(screen.getByRole('checkbox', { name: 'Show events' }))
     expect(cell('Sat 15:00')).toHaveAttribute('title', 'MC night')
