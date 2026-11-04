@@ -66,6 +66,9 @@ export function toSlot(instant: Date) {
 }
 
 export const slotKey = (instant: Date) => `${instant.toISOString().slice(0, 13)}:00:00Z`
+// Hour keys of a window starting at `start` (ISO) for `hours` hours.
+export const windowKeys = (start: string, hours: number) =>
+  new Set(Array.from({ length: hours }, (_, i) => slotKey(new Date(Date.parse(start) + i * HOUR))))
 export const slotInstant = (weekStart: string, h: number) => new Date(Date.parse(`${weekStart}T00:00:00Z`) + h * HOUR)
 
 export const weekLabel = (wall: number) => new Date(wall).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' })

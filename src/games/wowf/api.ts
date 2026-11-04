@@ -376,6 +376,15 @@ export function putAvailabilitySettings(tz: string, defaultHours: number[] | nul
   })
 }
 
+export interface ApiRoleCount { total: number; tank: number; healer: number; dps: number; none: number }
+export interface ApiBestSlot extends ApiRoleCount { start: string; hours: number }
+export interface ApiSummary { slots: Record<string, ApiRoleCount>; best: ApiBestSlot[] }
+
+// Members: anonymous guild availability (counts per UTC hour, best `length`-hour windows).
+export function getAvailabilitySummary(start: string, hours: number, length: number) {
+  return forgeFetch<ApiSummary>(`${BASE}/availability/summary?start=${encodeURIComponent(start)}&hours=${hours}&length=${length}`)
+}
+
 export function getHeatmap(start: string, weeks: number) {
   return forgeFetch<ApiHeatmap>(`${BASE}/availability?start=${start}&weeks=${weeks}`)
 }

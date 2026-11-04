@@ -3,7 +3,7 @@ import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router'
 import { AuthContext, type AuthContextType } from '../../auth/authContext'
-import type { ApiAvailability, ApiEvent, ApiEventDetail, ApiHeatmap } from './api'
+import type { ApiAvailability, ApiEvent, ApiEventDetail, ApiHeatmap, ApiSummary } from './api'
 import { Availability } from './Availability'
 import { AvailabilityViewer } from './AvailabilityViewer'
 import { Register } from './Register'
@@ -45,6 +45,14 @@ const heat: ApiHeatmap = {
   ],
   slots: { '2026-11-03T01:00:00Z': ['u1', 'u2'], '2026-11-04T02:00:00Z': ['u1'] },
 }
+// Mon 20:00 Toronto = 2026-11-03T01:00Z; the best 2h window starts there.
+const summary: ApiSummary = {
+  slots: {
+    '2026-11-03T01:00:00Z': { total: 2, tank: 1, healer: 1, dps: 0, none: 0 },
+    '2026-11-03T02:00:00Z': { total: 3, tank: 1, healer: 1, dps: 1, none: 0 },
+  },
+  best: [{ start: '2026-11-03T01:00:00Z', hours: 2, total: 2, tank: 1, healer: 1, dps: 0, none: 0 }],
+}
 const thrall: ApiCharacter = {
   id: 'c1', user_id: 'u1', name: 'Thrall', faction: 'Horde', race: 'Orc', class: 'Shaman', ruleset: 'PvP',
   level: 60, main_spec: null, off_spec: null, role: null, professions: [], is_main: true, position: 0, data: {}, updated_at: null,
@@ -77,6 +85,7 @@ beforeEach(() => {
     if (path.endsWith('/availability/me/weeks')) return Promise.resolve(ok(body.weeks))
     if (path.endsWith('/availability/me/settings')) return Promise.resolve(ok({ tz: body.tz, default_hours: body.default_hours }))
     if (path.endsWith('/availability')) return Promise.resolve(ok(heat))
+    if (path.endsWith('/availability/summary')) return Promise.resolve(ok(summary))
     if (path.endsWith('/characters')) return Promise.resolve(ok([thrall]))
     if (path.endsWith('/events')) return Promise.resolve(ok([raid, pvp, old]))
     if (path.endsWith('/signup')) {
@@ -138,6 +147,57 @@ describe('Availability (member)', () => {
     await user.click(cell('Save default'))
     expect(await screen.findByText(/Default week saved/)).toBeInTheDocument()
     expect(calls.find(c => c.url.endsWith('/availability/me/settings'))!.body).toEqual({ tz: 'America/Toronto', default_hours: [20, 21] })
+  })
+})
+
+describe('Guild overlay and best times', () => {
+  it('shows anonymous counts and highlights a best window on hover', async () => {
+    const user = userEvent.setup()
+    renderIn(<Availability />)
+    await waitFor(() => expect(cell('Mon 21:00')).toHaveTextContent('3'))
+    expect(cell('Mon 20:00')).toHaveTextContent('2')
+    expect(cell('Tue 20:00')).toHaveTextContent('')
+
+    await user.hover(cell('Mon 21:00'))
+    const panel = screen.getByRole('complementary')
+    expect(within(panel).getByText(/Mon 21:00 · 3 available/)).toBeInTheDocument()
+    expect(within(panel).getByText('DPS').parentElement).toHaveTextContent('DPS1')
+    expect(within(panel).queryByText('Jak')).not.toBeInTheDocument()
+
+    const toggle = screen.getByRole('checkbox', { name: /Show guild availability/ })
+    await user.click(toggle)
+    expect(cell('Mon 21:00')).toHaveTextContent('')
+    expect(within(panel).queryByText(/available/)).not.toBeInTheDocument()
+    await user.click(toggle)
+    expect(cell('Mon 21:00')).toHaveTextContent('3')
+
+    const slot = await screen.findByRole('listitem', { name: /Best time Mon/ })
+    expect(slot).toHaveTextContent('Mon 20:00 to 22:00')
+    expect(slot).toHaveTextContent('2 free')
+    await user.hover(slot)
+    expect(cell('Mon 20:00').style.boxShadow).not.toBe('')
+    expect(cell('Mon 21:00').style.boxShadow).not.toBe('')
+    expect(cell('Mon 22:00').style.boxShadow).toBe('')
+    await user.unhover(slot)
+    expect(cell('Mon 20:00').style.boxShadow).toBe('')
+    expect(calls.some(c => c.url.includes('/availability/summary?') && c.url.includes('length=3'))).toBe(true)
+  })
+})
+
+describe('Events on personal availability', () => {
+  it('outlines event hours by default and toggles them off', async () => {
+    const user = userEvent.setup()
+    renderIn(<Availability />)
+    // MC night: Sat Nov 7 20:00Z = Sat 15:00 Toronto, 3h.
+    await waitFor(() => expect(cell('Sat 15:00')).toHaveAttribute('title', 'MC night'))
+    expect(cell('Sat 17:00')).toHaveAttribute('title', 'MC night')
+    expect(cell('Sat 18:00')).not.toHaveAttribute('title')
+    await user.hover(cell('Sat 16:00'))
+    expect(within(screen.getByRole('complementary')).getByText('Event: MC night')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('checkbox', { name: 'Show events' }))
+    expect(cell('Sat 15:00')).not.toHaveAttribute('title')
+    expect(within(screen.getByRole('complementary')).queryByText(/Event:/)).not.toBeInTheDocument()
   })
 })
 

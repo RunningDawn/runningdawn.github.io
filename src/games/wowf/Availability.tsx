@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { getMyAvailability, putAvailabilitySettings, putWeeks, type ApiAvailability } from './api'
+import { getAvailabilitySummary, getMyAvailability, listEvents, putAvailabilitySettings, putWeeks, type ApiAvailability, type ApiEvent, type ApiSummary } from './api'
+import { BestSlots } from './BestSlots'
+import { RoleTiles } from './RoleTiles'
 import { HourGrid } from './HourGrid'
 import { TimezoneSelect } from './TimezoneSelect'
 import { Spinner } from './eventUi'
+import { eventHours } from './eventTime'
 import {
-  DAY, WEEK, browserTz, cellInstant, isoDate, localMonday, onTzChange, slotInstant, slotKey, toSlot, utcMonday, weekLabel,
+  DAY, DAYS, WEEK, browserTz, hourLabel, cellInstant, isoDate, localMonday, onTzChange, slotInstant, slotKey, toSlot, utcMonday, weekLabel,
 } from './weekTime'
 
 const WEEKS = 4
@@ -20,6 +23,13 @@ function Editor() {
   const [dirty, setDirty] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
+  const [showGuild, setShowGuild] = useState(true)
+  const [showEvents, setShowEvents] = useState(true)
+  const [events, setEvents] = useState<ApiEvent[]>([])
+  const [hover, setHover] = useState<{ wd: number; h: number } | null>(null)
+  const [length, setLength] = useState(3)
+  const [guild, setGuild] = useState<ApiSummary | null>(null)
+  const [glow, setGlow] = useState<Set<string> | null>(null)
 
   const firstWall = useMemo(() => localMonday(new Date(), tz), [tz])
   // Everything the four local weeks (plus the one before, for "copy last week") can touch in UTC.
@@ -39,6 +49,21 @@ function Editor() {
   useEffect(() => onTzChange(setTz), [])
 
   const wall = typeof tab === 'number' ? firstWall + tab * WEEK : firstWall
+  // Anonymous guild counts for the shown week: the overlay and the best times.
+  useEffect(() => {
+    if (tab === 'default') return
+    let live = true
+    setGuild(null)
+    getAvailabilitySummary(cellInstant(wall, 0, 0, tz).toISOString(), 168, length).then(res => {
+      if (live) setGuild(res.status === 'ok' ? res.payload : { slots: {}, best: [] })
+    })
+    return () => { live = false }
+  }, [tab, wall, tz, length])
+  useEffect(() => {
+    listEvents().then(res => { if (res.status === 'ok') setEvents(res.payload.filter(e => !e.cancelled)) })
+  }, [])
+  const eventsAt = useMemo(() => eventHours(events), [events])
+  const guildMax = useMemo(() => Math.max(1, ...Object.values(guild?.slots ?? {}).map(c => c.total)), [guild])
   const instant = (wd: number, h: number) => cellInstant(wall, wd, h, tz)
   const touched = useMemo(() => {
     const set = new Set<string>()
@@ -107,9 +132,19 @@ function Editor() {
   if (error && !data) return <p className="text-sm text-red-400">{error}</p>
   if (!data) return <Spinner />
 
-  const cell = (wd: number, h: number) => tab === 'default'
-    ? { on: defSet.has(wd * 24 + h) }
-    : { on: keys.has(slotKey(instant(wd, h))), bg: usingDefault && keys.has(slotKey(instant(wd, h))) ? '#c4af6480' : undefined }
+  const cell = (wd: number, h: number) => {
+    if (tab === 'default') return { on: defSet.has(wd * 24 + h) }
+    const k = slotKey(instant(wd, h))
+    const mine = keys.has(k)
+    const ev = showEvents ? eventsAt.get(k) ?? [] : []
+    const base = { on: mine, bg: usingDefault && mine ? '#c4af6480' : undefined, glow: glow?.has(k), mark: ev.length > 0, title: ev.length ? ev.join(', ') : undefined }
+    const c = guild?.slots[k]
+    if (!showGuild || !c) return base
+    return { ...base, label: c.total, bg: mine ? base.bg : `rgba(34,197,94,${0.12 + 0.6 * c.total / guildMax})` }
+  }
+  const hoverKey = hover && typeof tab === 'number' ? slotKey(instant(hover.wd, hover.h)) : null
+  const hovered = hoverKey && showGuild ? guild?.slots[hoverKey] : undefined
+  const hoveredEvents = hoverKey && showEvents ? eventsAt.get(hoverKey) ?? [] : []
 
   return (
     <div className="forge-card space-y-4">
@@ -137,7 +172,39 @@ function Editor() {
       )}
       {tab === 'default' && <p className="text-xs text-[#6b7280]">Your usual week. Applies to any week you have not filled in. Saved in your local time, so it follows daylight-saving changes on its own.</p>}
 
-      <HourGrid cell={cell} onPaint={paint} />
+      {typeof tab === 'number' && (
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#9ca3af]">
+          <label className="flex items-center gap-1.5 cursor-pointer">
+            <input type="checkbox" checked={showGuild} onChange={e => setShowGuild(e.target.checked)} /> Show guild availability
+          </label>
+          <label className="flex items-center gap-1.5 cursor-pointer">
+            <input type="checkbox" checked={showEvents} onChange={e => setShowEvents(e.target.checked)} /> Show events
+          </label>
+          {showGuild && <span className="text-[#6b7280]">Green = how many guildmates are free (counts only, never who). Blue outline = event.</span>}
+        </div>
+      )}
+
+      <div className={typeof tab === 'number' ? 'grid grid-cols-1 lg:grid-cols-[1fr_13rem] gap-4 items-start' : ''}>
+        <HourGrid cell={cell} onPaint={paint} onHover={(wd, h) => setHover(wd === null || h === null ? null : { wd, h })} />
+        {typeof tab === 'number' && (
+          <aside className="rounded-lg border border-[#2a2d3a] p-3 space-y-4" aria-live="polite">
+            {(showGuild || showEvents) && (
+              <div className="text-sm min-h-24">
+                {hover
+                  ? (
+                    <>
+                      <p className="text-[#e2e4ed]">{DAYS[hover.wd]} {hourLabel(hover.h)}{showGuild && <> &middot; {hovered?.total ?? 0} available</>}</p>
+                      {showGuild && <div className="mt-2"><RoleTiles counts={hovered ?? { tank: 0, healer: 0, dps: 0, none: 0 }} /></div>}
+                      {hoveredEvents.length > 0 && <p className="mt-2 text-xs text-sky-300">Event: {hoveredEvents.join(', ')}</p>}
+                    </>
+                  )
+                  : <p className="text-[#6b7280]">Hover an hour to see {showGuild ? 'how many guildmates are free, by role' : 'its events'}.</p>}
+              </div>
+            )}
+            <BestSlots best={guild?.best ?? null} tz={tz} length={length} onLength={setLength} onHover={setGlow} />
+          </aside>
+        )}
+      </div>
 
       <div className="flex gap-2 flex-wrap items-center">
         <button type="button" onClick={save} disabled={!dirty} className="forge-btn-active cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">{tab === 'default' ? 'Save default' : 'Save week'}</button>
@@ -157,7 +224,7 @@ function Editor() {
 
 export function Availability() {
   return (
-    <div className="max-w-3xl space-y-6">
+    <div className="max-w-4xl space-y-6">
       <div>
         <h1 className="text-xl font-semibold text-[#e2e4ed]">Availability</h1>
         <p className="text-sm text-[#6b7280]">Mark the hours you can play, week by week. Leadership plans events around the heatmap this builds.</p>

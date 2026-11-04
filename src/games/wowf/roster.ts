@@ -46,6 +46,19 @@ export function roleCounts(roles: (string | null | undefined)[]): Composition {
   for (const r of roles) { const b = bucketOf(r); if (b) out[b]++ }
   return out
 }
+export type RoleTally = Composition & { none: number }
+// Role buckets as shown in the availability panels: label and colours.
+export const ROLE_TILES = [
+  { key: 'tank', label: 'Tanks', one: 'Tank', text: 'text-sky-300', dot: 'bg-sky-400' },
+  { key: 'healer', label: 'Healers', one: 'Healer', text: 'text-green-300', dot: 'bg-green-400' },
+  { key: 'dps', label: 'DPS', one: 'DPS', text: 'text-red-300', dot: 'bg-red-400' },
+  { key: 'none', label: 'No role', one: 'No role', text: 'text-[#9ca3af]', dot: 'bg-[#6b7280]' },
+] as const
+export const tileOf = (role: string | null | undefined) => ROLE_TILES.find(t => t.key === (bucketOf(role) ?? 'none'))!
+export function roleTally(roles: (string | null | undefined)[]): RoleTally {
+  const c = roleCounts(roles)
+  return { ...c, none: roles.length - c.tank - c.healer - c.dps }
+}
 // `total` = everyone counted; the rest have no role (their main has no spec).
 export function roleSummary(c: Composition, total = c.tank + c.healer + c.dps) {
   const none = total - c.tank - c.healer - c.dps
