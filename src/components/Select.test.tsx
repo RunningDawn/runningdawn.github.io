@@ -11,22 +11,22 @@ function Harness() {
   return (
     <>
       <Select aria-label="Pick" options={OPTS} value={value} onChange={setValue} />
-      <output>{value?.value ?? 'none'}</output>
+      <output data-testid="picked">{value?.value ?? 'none'}</output>
     </>
   )
 }
 
-describe('Select type-ahead', () => {
-  it('picks by prefix and cycles on a repeated letter', async () => {
+describe('Select search', () => {
+  it('filters as you type; Enter picks the first match', async () => {
     const user = userEvent.setup()
     render(<Harness />)
     await user.tab()
-    await user.keyboard('ta')
-    expect(screen.getByRole('status')).toHaveTextContent('Tauren')
-    await new Promise(r => setTimeout(r, 750))
-    await user.keyboard('ww')
-    expect(screen.getByRole('status')).toHaveTextContent('Warrior')
-    await user.keyboard('z')
-    expect(screen.getByRole('status')).toHaveTextContent('Warrior')
+    await user.keyboard('ta{Enter}')
+    expect(screen.getByTestId('picked')).toHaveTextContent('Tauren')
+    await user.click(screen.getByRole('combobox', { name: 'Pick' }))
+    await user.keyboard('warr')
+    expect(screen.queryByRole('option', { name: 'Warlock' })).not.toBeInTheDocument()
+    await user.keyboard('{Enter}')
+    expect(screen.getByTestId('picked')).toHaveTextContent('Warrior')
   })
 })

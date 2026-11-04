@@ -47,7 +47,6 @@ export function Events() {
     <div className="max-w-3xl space-y-6">
       <div>
         <h1 className="text-xl font-semibold text-[#e2e4ed]">Events</h1>
-        <p className="text-sm text-[#6b7280]">Raid nights, PvP sessions and anything else the guild runs. Leadership only.</p>
       </div>
       <WowfGate>
         {leadership ? <Manager /> : <p className="text-sm text-red-400">This page is for WoW guild leadership.</p>}

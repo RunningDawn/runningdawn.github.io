@@ -317,9 +317,26 @@ export interface ApiAudit {
   created_at: string
 }
 
-export function getAudit(opts: { limit?: number; before?: string; target_type?: string } = {}) {
+export interface ApiAuditFacets {
+  actions: string[]
+  target_types: string[]
+  actors: { id: string; username: string }[]
+}
+
+export interface AuditQuery {
+  limit?: number; before?: string; since?: string; target_type?: string; target_id?: string
+  actor?: string; action?: string; q?: string
+}
+
+// Leadership: newest first; `since` inclusive, `q` searches action / actor / target id / details.
+export function getAudit(opts: AuditQuery = {}) {
   const qs = new URLSearchParams(Object.entries(opts).filter(([, v]) => v) as [string, string][]).toString()
   return forgeFetch<ApiAudit[]>(`${BASE}/audit${qs ? `?${qs}` : ''}`)
+}
+
+// Leadership: the actions, target types and actors present in the log.
+export function getAuditFacets() {
+  return forgeFetch<ApiAuditFacets>(`${BASE}/audit/facets`)
 }
 
 export function deleteDrop(id: string) {

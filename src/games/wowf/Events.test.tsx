@@ -90,9 +90,14 @@ beforeEach(() => {
       detail.adjustments = []
       return Promise.resolve(ok(null))
     }
+    if (path.endsWith('/audit/facets')) {
+      return Promise.resolve(ok({ actions: ['item.create', 'item.update'], target_types: ['item', 'raid'], actors: [{ id: 'u1', username: 'Jakob' }] }))
+    }
     if (path.endsWith('/audit')) {
       const q = new URL(u, 'http://x').searchParams
-      const rows = audit.filter(a => (!q.get('before') || a.created_at < q.get('before')!) && (!q.get('target_type') || a.target_type === q.get('target_type')))
+      const has = (k: string, v: string) => !q.get(k) || q.get(k) === v
+      const rows = audit.filter(a => (!q.get('before') || a.created_at < q.get('before')!) && has('target_type', a.target_type)
+        && has('action', a.action) && has('target_id', a.target_id ?? '') && (!q.get('q') || JSON.stringify(a).toLowerCase().includes(q.get('q')!.toLowerCase())))
       return Promise.resolve(ok(rows.slice(0, Number(q.get('limit') ?? 100))))
     }
     if (path.endsWith('/events/e1/reserves')) {
@@ -521,13 +526,40 @@ describe('Audit log (leadership)', () => {
     renderAt('/wow-forever/audit', true)
     expect(await screen.findByText('name: Thing 0, boss: Ragnaros')).toBeInTheDocument()
 
+    const logCalls = () => calls.filter(c => new URL(c.url, 'http://x').pathname.endsWith('/audit'))
     await user.click(screen.getByRole('button', { name: 'Load more' }))
-    await waitFor(() => expect(calls.filter(c => c.url.includes('/audit')).length).toBe(2))
-    const paged = new URL(calls.filter(c => c.url.includes('/audit'))[1].url)
+    await waitFor(() => expect(logCalls().length).toBe(2))
+    const paged = new URL(logCalls()[1].url, 'http://x')
     expect(paged.searchParams.get('before')).toBe(audit[99].created_at)
 
     await user.click(screen.getByRole('combobox', { name: 'Target type' }))
     await user.click(screen.getByRole('option', { name: 'item' }))
     await waitFor(() => expect(calls.some(c => c.url.includes('target_type=item'))).toBe(true))
+  })
+
+  it('searches, filters by clicking, and clears', async () => {
+    const user = userEvent.setup()
+    audit = [row(0), { ...row(1), action: 'item.create', detail: { name: 'Sulfuras' } }]
+    renderAt('/wow-forever/audit', true)
+    expect(await screen.findByText('name: Thing 0, boss: Ragnaros')).toBeInTheDocument()
+
+    await user.type(screen.getByRole('searchbox', { name: 'Search the log' }), 'sulf')
+    await waitFor(() => expect(screen.queryByText('name: Thing 0, boss: Ragnaros')).not.toBeInTheDocument())
+    expect(screen.getByText('name: Sulfuras')).toBeInTheDocument()
+    expect(calls.some(c => c.url.includes('q=sulf'))).toBe(true)
+
+    await user.click(screen.getByRole('button', { name: 'Clear filters' }))
+    expect(await screen.findByText('name: Thing 0, boss: Ragnaros')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Thing 0' }))
+    expect(await screen.findByText(/History of item/)).toBeInTheDocument()
+    await waitFor(() => expect(screen.queryByText('name: Sulfuras')).not.toBeInTheDocument())
+    expect(calls.some(c => c.url.includes('target_id=t0'))).toBe(true)
+
+    await user.click(screen.getByRole('button', { name: 'Show every target' }))
+    expect(await screen.findByText('name: Sulfuras')).toBeInTheDocument()
+
+    await user.type(screen.getByLabelText('From'), '2099-01-01')
+    await waitFor(() => expect(calls.some(c => c.url.includes('since='))).toBe(true))
   })
 })

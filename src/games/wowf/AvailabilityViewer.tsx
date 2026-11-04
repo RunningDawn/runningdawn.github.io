@@ -131,7 +131,6 @@ export function AvailabilityViewer() {
     <div className="max-w-4xl space-y-6">
       <div>
         <h1 className="text-xl font-semibold text-[#e2e4ed]">Availability Viewer</h1>
-        <p className="text-sm text-[#6b7280]">When the guild can play, week by week.</p>
       </div>
       <WowfGate>{leadership ? <Viewer /> : <p className="text-sm text-red-400">Leadership only.</p>}</WowfGate>
     </div>

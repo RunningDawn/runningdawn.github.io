@@ -230,7 +230,6 @@ function Table() {
       <div className="flex items-end gap-4 flex-wrap">
         <div className="flex-1 min-w-0">
           <h1 className="text-xl font-semibold text-[#e2e4ed]">Guild Roster</h1>
-          <p className="text-sm text-[#6b7280]">Every registered character across the guild. Leadership only for now.</p>
         </div>
         <div className="w-64">
           <Select

@@ -23,7 +23,7 @@ export function CharacterRoster() {
     <div className="max-w-3xl space-y-6">
       <div>
         <h1 className="text-xl font-semibold text-[#e2e4ed]">Character Roster</h1>
-        <p className="text-sm text-[#6b7280]">Your WoW: Forever characters, as the guild sees them. Drag cards to reorder; your main leads the raid roster and is set by leadership.</p>
+        <p className="text-sm text-[#6b7280]">Your WoW: Forever characters, as the guild sees them.<br />Drag cards to reorder; your main leads the raid roster and is set by leadership.</p>
       </div>
       <WowfGate>
         <RosterEditor />
