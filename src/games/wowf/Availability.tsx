@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Select, type SelectOption } from '../../components/Select'
 import { getMyAvailability, putAvailabilitySettings, putWeeks, type ApiAvailability } from './api'
 import { HourGrid } from './HourGrid'
+import { TimezoneSelect } from './TimezoneSelect'
 import { Spinner } from './eventUi'
 import {
-  DAY, WEEK, browserTz, cellInstant, isoDate, localMonday, slotInstant, slotKey, offsetMinutes, toSlot, tzOffset, tzOptions, utcMonday, weekLabel,
+  DAY, WEEK, browserTz, cellInstant, isoDate, localMonday, onTzChange, slotInstant, slotKey, toSlot, utcMonday, weekLabel,
 } from './weekTime'
 
 const WEEKS = 4
@@ -36,6 +36,7 @@ function Editor() {
     if (res.payload.tz && res.payload.tz !== tz) setTz(res.payload.tz)
   }, [rangeStart, tz])
   useEffect(() => { load() }, [load])
+  useEffect(() => onTzChange(setTz), [])
 
   const wall = typeof tab === 'number' ? firstWall + tab * WEEK : firstWall
   const instant = (wd: number, h: number) => cellInstant(wall, wd, h, tz)
@@ -103,10 +104,6 @@ function Editor() {
     setTz(next)
   }
 
-  const tzOpts = useMemo<SelectOption[]>(() => tzOptions()
-    .map(z => { const off = tzOffset(z); return { value: z, label: `${z.replace(/_/g, ' ')} (${off})`, minutes: offsetMinutes(off) } })
-    .sort((a, b) => a.minutes - b.minutes || a.value.localeCompare(b.value))
-    .map(({ value, label }) => ({ value, label })), [])
   if (error && !data) return <p className="text-sm text-red-400">{error}</p>
   if (!data) return <Spinner />
 
@@ -118,7 +115,7 @@ function Editor() {
     <div className="forge-card space-y-4">
       <div className="flex items-end gap-3 flex-wrap">
         <label className="flex flex-col gap-1 w-72"><span className="forge-label">Timezone</span>
-          <Select aria-label="Timezone" options={tzOpts} isSearchable value={tzOpts.find(o => o.value === tz) ?? { value: tz, label: `${tz} (${tzOffset(tz)})` }} onChange={o => o && changeTz(o.value)} />
+          <TimezoneSelect value={tz} onChange={changeTz} />
         </label>
         <p className="text-xs text-[#6b7280] pb-2">Times shown in {tz.replace(/_/g, ' ')}. Saved in UTC, so the grid follows you if you change timezone.</p>
       </div>

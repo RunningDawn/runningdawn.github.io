@@ -19,10 +19,7 @@ import { Register } from './Register'
 import { AuditLog } from './AuditLog'
 import { WowfGate } from './WowfGate'
 import { useWowfAccess } from './access'
-
-function WowfSettings() {
-  return <p className="px-5 py-4 text-sm text-[#6b7280]">No settings yet.</p>
-}
+import { WowfSettings } from './WowfSettings'
 
 // Every page but the splash needs access: one centred sign-in / denied panel for all.
 function Gated() {

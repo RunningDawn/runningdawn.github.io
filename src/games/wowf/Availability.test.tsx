@@ -7,6 +7,7 @@ import type { ApiAvailability, ApiEvent, ApiEventDetail, ApiHeatmap } from './ap
 import { Availability } from './Availability'
 import { AvailabilityViewer } from './AvailabilityViewer'
 import { Register } from './Register'
+import { WowfSettings } from './WowfSettings'
 import type { ApiCharacter } from './roster'
 
 function ctx(leadership: boolean): AuthContextType {
@@ -172,6 +173,20 @@ describe('Availability Viewer (leadership)', () => {
     expect(cell('Tue 21:00')).toHaveAttribute('aria-pressed', 'false')
     await user.click(screen.getByRole('button', { name: 'Jak' }))
     expect(cell('Tue 21:00')).toHaveStyle({ background: '#d97706' })
+  })
+})
+
+describe('Settings timezone', () => {
+  it('saves the timezone, keeps the default week and updates the open viewer', async () => {
+    const user = userEvent.setup()
+    renderIn(<><WowfSettings /><AvailabilityViewer /></>, true)
+    expect(await screen.findByText(/shown in America\/Toronto/)).toBeInTheDocument()
+    const [settingsTz] = await screen.findAllByRole('combobox', { name: 'Timezone' })
+    await user.click(settingsTz)
+    await user.keyboard('London{Enter}')
+    expect(await screen.findByText('Timezone saved.')).toBeInTheDocument()
+    expect(calls.find(c => c.url.endsWith('/availability/me/settings'))!.body).toEqual({ tz: 'Europe/London', default_hours: [20] })
+    expect(await screen.findByText(/shown in Europe\/London/)).toBeInTheDocument()
   })
 })
 

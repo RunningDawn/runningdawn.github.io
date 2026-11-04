@@ -4,7 +4,7 @@ import { useWowfAccess } from './access'
 import { HourGrid } from './HourGrid'
 import { Spinner } from './eventUi'
 import { roleCounts, roleSummary } from './roster'
-import { DAY, DAYS, WEEK, browserTz, cellInstant, hourLabel, isoDate, localMonday, slotKey, utcMonday, weekLabel } from './weekTime'
+import { DAY, DAYS, WEEK, browserTz, onTzChange, cellInstant, hourLabel, isoDate, localMonday, slotKey, utcMonday, weekLabel } from './weekTime'
 
 const WEEKS = 4
 
@@ -26,6 +26,7 @@ function Viewer() {
     getMyAvailability(isoDate(rangeStart), 1).then(res => { if (res.status === 'ok' && res.payload.tz) setTz(res.payload.tz) })
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+  useEffect(() => onTzChange(setTz), [])
   useEffect(() => {
     listEvents().then(res => { if (res.status === 'ok') setEvents(res.payload.filter(e => !e.cancelled)) })
   }, [])

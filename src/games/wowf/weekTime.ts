@@ -7,6 +7,15 @@ export const WEEK = 7 * DAY
 
 export const browserTz = () => Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
 
+// Settings tells open pages when the saved timezone changes.
+const TZ_EVENT = 'wowf:tz'
+export const announceTz = (tz: string) => window.dispatchEvent(new CustomEvent(TZ_EVENT, { detail: tz }))
+export function onTzChange(cb: (tz: string) => void) {
+  const handler = (e: Event) => cb((e as CustomEvent<string>).detail)
+  window.addEventListener(TZ_EVENT, handler)
+  return () => window.removeEventListener(TZ_EVENT, handler)
+}
+
 export function tzOptions(): string[] {
   const intl = Intl as unknown as { supportedValuesOf?: (k: string) => string[] }
   const list = intl.supportedValuesOf?.('timeZone') ?? []
