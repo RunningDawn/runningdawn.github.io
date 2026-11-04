@@ -267,6 +267,11 @@ a {
 	animation-delay: 1.25s;
 }
 
+/* WoW tile: fade in after the github/steam/discord icons (0.5s/0.75s/1s). */
+#header nav.games li.wowf-tile {
+	animation-delay: 1.5s;
+}
+
 /*game buttons*/
 #header nav a.game {
 	-webkit-tap-highlight-color: rgba(196, 175, 100, 0.3);
