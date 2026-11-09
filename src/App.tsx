@@ -33,9 +33,13 @@ const WowfLayout = lazyWithReload(() => import('./games/wowf/WowfLayout'))
 function TitleSync() {
   const { pathname } = useLocation()
   useEffect(() => {
-    document.title = pathname.startsWith('/wow-forever')
-      ? 'WoW: Forever | Running Dawn'
-      : 'Running Dawn'
+    const wowf = pathname.startsWith('/wow-forever')
+    document.title = wowf ? 'WoW: Forever | Running Dawn' : 'Running Dawn'
+    // The WoW section installs as its own app: swap the manifest and the iOS home-screen name.
+    document.querySelector('link[rel="manifest"]')
+      ?.setAttribute('href', wowf ? '/manifest-wowf.json' : '/manifest.json')
+    document.querySelector('meta[name="apple-mobile-web-app-title"]')
+      ?.setAttribute('content', wowf ? 'DAWN WOW:F' : 'Running Dawn')
   }, [pathname])
   return null
 }
