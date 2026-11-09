@@ -104,7 +104,7 @@ a {
 
 /*background*/
 #bg {
-	background: #c4af64 url("/bg.jpg");
+	background: #c4af64 url("/bg.webp");
 	height: 100%;
 
 	/* Center and scale the image nicely */
